@@ -1,0 +1,48 @@
+.Editor {
+    
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.Card {
+    padding: 28px;
+    width: 700px;
+    height: 80%;
+    background-color: antiquewhite;
+    border: 5px dashed rgb(183, 148, 103);
+    box-shadow: 0 10px 20px 0 burlywood;
+    
+}
+h2{
+    text-align: center;
+    padding-bottom: 15px;
+    text-transform: uppercase;
+    color: rgb(149, 120, 82);
+}
+.body  {
+    display: flex;
+    justify-content: center;
+    
+}
+.leftSide {
+    width: 250px;
+    border: 3px solid rgb(183, 148, 103);
+    margin-right: 10px;
+    height: 300px;
+}
+span {
+    font-size: 20px;
+    color: rgb(149, 120, 82);
+    margin-bottom: 4px;
+    display: block;
+}
+.filterElements {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: 6px;
+    
+}
+
+
