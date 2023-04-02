@@ -1,15 +1,16 @@
 import React, {useState} from 'react'
 import './style/main.css'
+import storeData from './list'
 import {IoMdUndo, IoMdRedo}  from 'react-icons/io'
 import {GrRotateLeft, GrRotateRight} from 'react-icons/gr'
 const Main = () => {
-    let FilterNames = {
+    const FilterNames = {
         'brightness': 'Яркость',
         'sepia': 'Сепия',
         'saturate': 'Насыщенность',
         'contrast': 'Контраст',
     }
-    let Filter = [
+    const Filter = [
         {
             name: 'brightness',
             maxValue : 200,
@@ -27,14 +28,13 @@ const Main = () => {
             maxValue : 200,
         }
     ]
-
+    const [details, setDetails] = useState('')
     const [property, setProperty] = useState({
         name: 'brightness',
         maxValue : 200,
     })
-    const [details, setDetails] = useState('')
     const [state, setState] = useState({
-        image: 'cat.ico',
+        image: '',
         brightness: 100,
         grayscale: 0,
         sepia: 0,
@@ -45,10 +45,15 @@ const Main = () => {
     })
 
     const inputHandle = (e) => {
+        let v = e.target.value
+        let n = e.target.name
         setState({
             ...state,
-            [e.target.name] : e.target.value
+            [n] : v
         })
+        let stateData = state
+        stateData.n = v
+        storeData.insert(stateData)
     }
 
     const saveImage = () => {
@@ -80,6 +85,9 @@ const Main = () => {
             ...state,
             rotate: state.rotate - 90
         })
+        const stateData = state
+        stateData.rotate = state.rotate - 90
+        storeData.insert(stateData)
     }
 
     const rightRotate = () => {
@@ -87,6 +95,21 @@ const Main = () => {
             ...state,
             rotate: state.rotate + 90
         })
+        const stateData = state;
+        stateData.rotate = state.rotate + 90; 
+        storeData.insert(stateData);
+    }
+    const redo = () => {
+        const data = storeData.redoEdit();
+        if (data) {
+            setState(data)
+        }
+    }
+    const undo = () => {
+        const data = storeData.undoEdit();
+        if (data) {
+            setState(data)
+        }
     }
     const imageHandle = (e) => {
         if (e.target.files.length !== 0) {
@@ -96,8 +119,18 @@ const Main = () => {
                 setState({
                         ...state,
                         image: reader.result
-                    }
-                )
+                })
+                const stateData = {
+                    image: reader.result,
+                    brightness: 100,
+                    grayscale: 0,
+                    sepia: 0,
+                    saturate: 100,
+                    contrast: 100,
+                    rotate: 0,
+                    hueRotate: 0,
+                }
+                storeData.insert(stateData);
             }
             reader.readAsDataURL(e.target.files[0])
         }
@@ -129,7 +162,7 @@ const Main = () => {
                         <div className="label_bar">
                             <span></span>
                         </div>
-                        <input name={property.name} onChange={inputHandle} value={state[property.name]} max={property.maxValue} type="range"/>
+                        <input name={property.name} onChange = {inputHandle} value={state[property.name]} max={property.maxValue} type="range"/>
                     </div>
                     <div className="rotate">
                         <label htmlFor="">Повернуть</label>
@@ -154,9 +187,8 @@ const Main = () => {
                         }
                     </div>
                     <div className="imageSelect">
-                        <button className='undo'><IoMdUndo/></button>
-                        <button className='redo'><IoMdRedo/></button>
-                        <button>Обновить</button>
+                        <button onClick={undo} className='undo'><IoMdUndo/></button>
+                        <button onClick={redo} className='redo'><IoMdRedo/></button>
                         <button onClick={saveImage}>Сохранить</button>
                         <button onClick={resetImage}>Сброс</button>
                         <label htmlFor = "choose" className = "custom">
