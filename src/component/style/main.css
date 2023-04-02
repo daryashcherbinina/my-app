@@ -1,3 +1,5 @@
+@import "slider.css";
+
 body {
     background-color:rgba(250, 235, 215, 0.4);
 }
@@ -119,6 +121,4 @@ svg {
 .imageSelect input {
     display: none;
 }
-
-
 

@@ -161,7 +161,7 @@ const Main = () => {
                         <button onClick={resetImage}>Сброс</button>
                         <label htmlFor = "choose" className = "custom">
                         </label>
-                        <input onChange={imageHandle} type="file" id='choose' />
+                        <input onChange={imageHandle} type="file" id='choose' accept="image/*"/>
                     </div>
                 </div>
             </div>
