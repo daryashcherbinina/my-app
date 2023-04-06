@@ -36,8 +36,8 @@ const Main = () => {
     const [state, setState] = useState({
         image: '',
         brightness: 100,
-        grayscale: 0,
         sepia: 0,
+        grayscale: 0,
         saturate: 100,
         contrast: 100,
         rotate: 0,
@@ -47,13 +47,12 @@ const Main = () => {
     const inputHandle = (e) => {
         let v = e.target.value
         let n = e.target.name
+        console.log(v);
         setState({
             ...state,
             [n] : v
         })
-        let stateData = state
-        stateData.n = v
-        storeData.insert(stateData)
+        
     }
 
     const saveImage = () => {
@@ -111,6 +110,10 @@ const Main = () => {
             setState(data)
         }
     }
+    const [isDisabled, setIsDisabled] = useState(true);
+    const handleClick = () => {
+        setIsDisabled(!isDisabled)
+      };
     const imageHandle = (e) => {
         if (e.target.files.length !== 0) {
             const reader = new FileReader()
@@ -135,6 +138,13 @@ const Main = () => {
             reader.readAsDataURL(e.target.files[0])
         }
     }
+    const storeChange = (e) => {
+        let v = e.target.value
+        let n = e.target.name
+        let stateData = state
+        stateData.n = v
+        storeData.insert(stateData)
+    }
     const resetImage = () => {
         setState({
             ...state,
@@ -149,12 +159,12 @@ const Main = () => {
             </div>
             <div className="body">
             <div className="leftSide">
-                <div className="wrap">
+                <div className="wrap"  >
                     <div className="filters">
                         <span>Фильтры</span>
                         <div className="filterElements">
                             {
-                                Filter.map((v, i) => <button className={property.name === v.name ? 'active' : ''} onClick={() => setProperty(v)} key={i} >{FilterNames[v.name]}</button>)
+                                Filter.map((v, i) => <button  className={property.name === v.name ? 'active' : ''} onClick={() => setProperty(v)} key={i} >{FilterNames[v.name]}</button>)
                             }
                         </div>
                     </div>
@@ -162,15 +172,16 @@ const Main = () => {
                         <div className="label_bar">
                             <span></span>
                         </div>
-                        <input name={property.name} onChange = {inputHandle} value={state[property.name]} max={property.maxValue} type="range"/>
+                        <input disabled={isDisabled} name={property.name} value={state[property.name]} onBlur = {storeChange} onChange = {inputHandle}   max={property.maxValue} type="range"/>
                     </div>
                     <div className="rotate">
                         <label htmlFor="">Повернуть</label>
                         <div className="rotateElements"> 
-                        <button onClick={leftRotate}><GrRotateLeft/></button>
-                        <button onClick={rightRotate}><GrRotateRight/></button>
+                        <button disabled={isDisabled} onClick={leftRotate}><GrRotateLeft/></button>
+                        <button disabled={isDisabled} onClick={rightRotate}><GrRotateRight/></button>
                         </div>
                     </div>
+                    
                   </div>  
 
                 </div>
@@ -193,7 +204,7 @@ const Main = () => {
                         <button onClick={resetImage}>Сброс</button>
                         <label htmlFor = "choose" className = "custom">
                         </label>
-                        <input onChange={imageHandle} type="file" id='choose' accept="image/*"/>
+                        <input onClick={handleClick} onChange={imageHandle}  type="file" id='choose' accept="image/*"/>
                     </div>
                 </div>
             </div>
