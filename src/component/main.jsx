@@ -196,10 +196,10 @@ const Main = () => {
                         }
                     </div>
                     <div className="imageSelect">
-                        <button onClick={undo} className='undo'><IoMdUndo/></button>
-                        <button onClick={redo} className='redo'><IoMdRedo/></button>
-                        <button onClick={saveImage}>Сохранить</button>
-                        <button onClick={resetImage}>Сброс</button>
+                        <button disabled={isDisabled} onClick={undo} className='undo'><IoMdUndo/></button>
+                        <button disabled={isDisabled} onClick={redo} className='redo'><IoMdRedo/></button>
+                        <button disabled={isDisabled} onClick={saveImage}>Сохранить</button>
+                        <button disabled={isDisabled} onClick={resetImage}>Сброс</button>
                         <label htmlFor = "choose" className = "custom">
                         </label>
                         <input onClick={handleClick} onChange={imageHandle}  type="file" id='choose' accept="image/*"/>
