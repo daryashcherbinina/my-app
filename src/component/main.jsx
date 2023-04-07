@@ -3,13 +3,22 @@ import './style/main.css'
 import storeData from './list'
 import {IoMdUndo, IoMdRedo}  from 'react-icons/io'
 import {GrRotateLeft, GrRotateRight} from 'react-icons/gr'
+
+/**
+ * Фукнциональный компонент Main, отвечающий за отрисовку основных компонентов, составляющих фоторедактор.
+ *
+ * @returns Main, содержаний все компоненты приложения
+ *
+ */
 const Main = () => {
+    // Массив названий фильтров
     const FilterNames = {
         'brightness': 'Яркость',
         'sepia': 'Сепия',
         'saturate': 'Насыщенность',
         'contrast': 'Контраст',
     }
+    // Массив фильтров
     const Filter = [
         {
             name: 'brightness',
@@ -28,22 +37,27 @@ const Main = () => {
             maxValue : 200,
         }
     ]
-    const [details, setDetails] = useState('')
-    const [property, setProperty] = useState({
+    // Хуки функционального компонента
+    const [details, setDetails] = useState('') // Установка текущего изображения
+    const [property, setProperty] = useState({ // Установка текущего фильтра
         name: 'brightness',
         maxValue : 200,
     })
-    const [state, setState] = useState({
+    const [state, setState] = useState({ // Установка параметров изображения
         image: '',
         brightness: 100,
-        grayscale: 0,
         sepia: 0,
         saturate: 100,
         contrast: 100,
         rotate: 0,
-        hueRotate: 0,
     })
+    const [isDisabled, setIsDisabled] = useState(true); // включение/отключение кнопок
 
+    /**
+     * Обрабатывает прокрутку слайдера
+     *
+     * @param e -объект события
+     */
     const inputHandle = (e) => {
         let v = e.target.value
         let n = e.target.name
@@ -54,13 +68,20 @@ const Main = () => {
 
     }
 
+    /**
+     * Сохраняет изображение на клиент
+     *
+     * @remarks
+     * Для сохранения создаётся canvas, в котором копируется итоговое изображение.
+     *
+     */
     const saveImage = () => {
             const canvas = document.createElement('canvas')
             canvas.width = details.naturalWidth
             canvas.height = details.naturalHeight
             const ctx = canvas.getContext('2d')
 
-            ctx.filter = `brightness(${state.brightness}%) brightness(${state.brightness}%) sepia(${state.sepia}%) saturate(${state.saturate}%) contrast(${state.contrast}%) grayscale(${state.grayscale}%) hue-rotate(${state.hueRotate}deg)`
+            ctx.filter = `brightness(${state.brightness}%) sepia(${state.sepia}%) saturate(${state.saturate}%) contrast(${state.contrast}%)`
 
             ctx.translate(canvas.width / 2, canvas.height / 2)
             ctx.rotate(state.rotate * Math.PI / 180)
@@ -78,6 +99,12 @@ const Main = () => {
             link.href = canvas.toDataURL()
             link.click()
     }
+
+    /**
+     * Поворачивает изображение на 90 градусов влево
+     *
+     *
+     */
     const leftRotate = () => {
         setState({
             ...state,
@@ -87,7 +114,11 @@ const Main = () => {
         stateData.rotate = state.rotate - 90
         storeData.insert(stateData)
     }
-
+    /**
+     * Поворачивает изображение на 90 градусов вправо
+     *
+     *
+     */
     const rightRotate = () => {
         setState({
             ...state,
@@ -97,23 +128,39 @@ const Main = () => {
         stateData.rotate = state.rotate + 90; 
         storeData.insert(stateData);
     }
+    /**
+     * Восстанавливает предыдущее действие
+     *
+     *
+     */
     const redo = () => {
         const data = storeData.redoEdit();
         if (data) {
             setState(data)
         }
     }
+    /**
+     * Отменяет предыдущее действие
+     *
+     *
+     */
     const undo = () => {
         const data = storeData.undoEdit();
         if (data) {
             setState(data)
         }
     }
+    /**
+     * Обрабатывает загрузку изображения
+     *
+     * @param e - объект события
+     */
     const imageHandle = (e) => {
         if (e.target.files.length !== 0) {
             const reader = new FileReader()
 
             reader.onload = () => {
+                setIsDisabled(false);
                 setState({
                         ...state,
                         image: reader.result
@@ -121,28 +168,34 @@ const Main = () => {
                 const stateData = {
                     image: reader.result,
                     brightness: 100,
-                    grayscale: 0,
                     sepia: 0,
                     saturate: 100,
                     contrast: 100,
                     rotate: 0,
-                    hueRotate: 0,
                 }
                 storeData.insert(stateData);
             }
             reader.readAsDataURL(e.target.files[0])
         }
     }
+    /**
+     * Сбрасывает текущее изображение
+     *
+     *
+     */
     const resetImage = () => {
+        setIsDisabled(true)
         setState({
             ...state,
             image: ''
         })
     }
-    const [isDisabled, setIsDisabled] = useState(true);
-    const handleClick = () => {
-        setIsDisabled(!isDisabled)
-      };
+
+    /**
+     * Сохраняет историю действий, выполняемых над изображением
+     *
+     * @param e -объект события
+     */
     const storeChange = (e) => {
         let v = e.target.value
         let n = e.target.name
@@ -202,7 +255,7 @@ const Main = () => {
                         <button disabled={isDisabled} onClick={resetImage}>Сброс</button>
                         <label htmlFor = "choose" className = "custom">
                         </label>
-                        <input onClick={handleClick} onChange={imageHandle}  type="file" id='choose' accept="image/*"/>
+                        <input onChange={imageHandle} type="file" id='choose' accept="image/*"/>
                     </div>
                 </div>
             </div>
