@@ -17,6 +17,7 @@ const Main = () => {
         'sepia': 'Сепия',
         'saturate': 'Насыщенность',
         'contrast': 'Контраст',
+        'hueRotate': 'Цвет',
     }
     // Массив фильтров
     const Filter = [
@@ -35,6 +36,10 @@ const Main = () => {
         {
             name: 'contrast',
             maxValue : 200,
+        },
+        {
+            name: 'hueRotate',
+            maxValue : 330,
         }
     ]
     // Хуки функционального компонента
@@ -49,6 +54,7 @@ const Main = () => {
         sepia: 0,
         saturate: 100,
         contrast: 100,
+        hueRotate: 0,
         rotate: 0,
     })
     const [isDisabled, setIsDisabled] = useState(true); // включение/отключение кнопок
@@ -68,7 +74,6 @@ const Main = () => {
             ...state,
             [n] : v
         })
-
     }
 
     /**
@@ -84,7 +89,7 @@ const Main = () => {
             canvas.height = details.naturalHeight
             const ctx = canvas.getContext('2d')
 
-            ctx.filter = `brightness(${state.brightness}%) sepia(${state.sepia}%) saturate(${state.saturate}%) contrast(${state.contrast}%)`
+            ctx.filter = `brightness(${state.brightness}%) sepia(${state.sepia}%) saturate(${state.saturate}%) contrast(${state.contrast}%) hue-rotate(${state.hueRotate}deg)`
 
             ctx.translate(canvas.width / 2, canvas.height / 2)
             ctx.rotate(state.rotate * Math.PI / 180)
@@ -174,6 +179,7 @@ const Main = () => {
                     sepia: 0,
                     saturate: 100,
                     contrast: 100,
+                    hueRotate: 0,
                     rotate: 0,
                 }
                 storeData.insert(stateData);
@@ -201,7 +207,7 @@ const Main = () => {
      */
     const storeChange = (e) => {
         let v = e.target.value
-        let n = e.target.name
+        //let n = e.target.name
         let stateData = state
         stateData.n = v
         storeData.insert(stateData)
@@ -227,7 +233,7 @@ const Main = () => {
                         <div className="label_bar">
                             <span></span>
                         </div>
-                        <input disabled={isDisabled} name={property.name} value={state[property.name]} onBlur = {storeChange} onChange = {inputHandle}   max={property.maxValue} type="range"/>
+                        <input disabled={isDisabled} name={property.name} value={state[property.name]} onBlur = {storeChange} onChange = {inputHandle} max={property.maxValue} type="range"/>
                     </div>
                     <div className="rotate">
                         <label htmlFor="">Повернуть</label>
@@ -243,9 +249,8 @@ const Main = () => {
                 <div className="imageSection">
                     <div className="image">
                         {
-                            state.image ? <img onLoad={(e)=>setDetails(e.currentTarget)} style={{filter : `brightness(${state.brightness}%) grayscale(${state.grayscale}%)
-                            sepia(${state.sepia}%) saturate(${state.saturate}%) contrast(${state.contrast}%)
-                            `, transform: `rotate(${state.rotate}deg)`}} src={state.image} alt="" /> :
+                            state.image ? <img onLoad={(e)=>setDetails(e.currentTarget)} style={{filter: `brightness(${state.brightness}%) 
+                            contrast(${state.contrast}%) sepia(${state.sepia}%) saturate(${state.saturate}%) hue-rotate(${state.hueRotate}deg)`, transform: `rotate(${state.rotate}deg)`}} src={state.image} alt="" /> :
                             <label htmlFor="choose">
                                 Выбрать фото
                             </label>
